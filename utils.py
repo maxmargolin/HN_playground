@@ -3,6 +3,7 @@ import json
 import config
 
 SECONDS_IN_MONTH = 60 * 60 * 24 * 30
+COMPARISON_POINT = 20 * 60  # 8PM
 
 
 def list_to_chunks(l, n):
@@ -13,7 +14,7 @@ def list_to_chunks(l, n):
         yield l[i:i + n]
 
 
-def get_json_from_file(file = config.DEFAULT_FILE):
+def get_json_from_file(file=config.DEFAULT_FILE):
     file = open(file, "r")
     json_in_file = json.loads(file.read())
     file.close()
