@@ -2,21 +2,13 @@ import json
 from functools import partial
 from multiprocessing.pool import ThreadPool
 
+import matplotlib.pyplot as plt
 import numpy as np
 import requests
+from scipy.stats import binom
 
 import config
-
-TECHNOLOGIES = ['Kubernetes', 'Linux', 'Windows', 'Solarwinds', 'Garmin', 'AWS', 'Docker', 'Github', 'Wordpress',
-                'Rundeck']
-SECONDS_IN_MONTH = 60 * 60 *24 * 30
-
-def list_to_chunks(l, n):
-    """
-    Split list l to sublists of length n
-    """
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
+from utils import SECONDS_IN_MONTH, list_to_chunks, get_json_from_file
 
 
 def get_items(item_ids):
@@ -79,36 +71,68 @@ def get_top_ids(amount=config.DEFAULT_TOP_POSTS_AMOUNT):
     return top_posts
 
 
-def get_json_from_file():
-    file = open("hacker_news_data.json", "r")
-    json_in_file = json.loads(file.read())
-    file.close()
-    return json_in_file
+def prompt_tech_selection(technologies=config.TECHNOLOGIES):
+    print("Select technology number for probability analysis from:")
+    for i, tech in enumerate(technologies):
+        print(f"{i + 1}. {tech}")
+    print("insert technology number for probability analysis:")
+
+    user_input = input()
+    if not user_input.isdigit() or int(user_input) > len(technologies) or int(user_input) < 1:
+        selection = 1
+        print(f"Using default selection {selection}")
+    selection = int(user_input)
+    return technologies[selection - 1]
 
 
-def learn_stuff():
-    topic_counter = {tech.lower(): 0 for tech in TECHNOLOGIES}
+def likelihood_prediction():
+    selected_word = prompt_tech_selection()
     article_json = get_json_from_file()
 
+    total, word_counter = count_occurrences(article_json, selected_word)
+    probability = word_counter / total
+    total_time = article_json[-1]['time'] - article_json[0]['time']
+    months_in_train_set = total_time / SECONDS_IN_MONTH
+    expected_posts_per_month = int(total / months_in_train_set)
+
+    print_text_results(expected_posts_per_month, probability, selected_word)
+    plot_likelihood(expected_posts_per_month, probability)
+
+
+def print_text_results(monthly_cmount, probability, selected_word):
+
+    print(f"probability of word {selected_word} per title: {probability}")
+    print(f"expecting {monthly_cmount} posts per month")
+    prob_atleast_once = 1 - (1 - probability) ** (monthly_cmount)
+    print(f"probability of ~{prob_atleast_once} for '{selected_word}' to appear at least once next month ")
+
+
+def count_occurrences(article_json, selected_word):
+    selected_word = selected_word.lower()
     total = 0
+    word_counter = 0
     for row in article_json:
         if 'title' in row and 'time' in row:
             title = row['title']
             total += 1
-            for word in title.lower().split():
-                if word in map(str.lower, TECHNOLOGIES):
-                    topic_counter[word] += 1
-    probabilities =  {key: val / total for key, val in topic_counter.items()}
-    print(probabilities)
-    total_time = article_json[-1]['time']-article_json[0]['time']
-    months_in_train_set = total_time/ SECONDS_IN_MONTH
-    expected_posts_per_month = total/months_in_train_set
-    print(expected_posts_per_month)
-    #1 - peob^expected_posts_per_month
+            for word_in_title in title.lower().split():
+                if word_in_title == selected_word:
+                    word_counter += 1
+    return total, word_counter
+
+
+def plot_likelihood(expected_posts_per_month, probability):
+    columns = max(10, int(5 * expected_posts_per_month * probability))
+    print("generating plot")
+    dist = [binom.pmf(r, expected_posts_per_month, probability) for r in range(columns)]
+    plt.bar(range(columns), dist)
+    plt.xlabel("occurrences")
+    plt.ylabel("likelihood")
+    plt.show()
 
 
 if __name__ == '__main__':
-    learn_stuff()
-    show_top()
+    likelihood_prediction()
+    # show_top()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
