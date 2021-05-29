@@ -13,11 +13,11 @@ def article_time_correlation():
     Full flow of time of day to number of comments correlation
     """
     articles = get_json_from_file()
-    data_samples = articles_to_filted_df(articles)
+    data_samples = articles_to_filtered_df(articles)
     report_correlation_result(data_samples)
 
 
-def articles_to_filted_df(articles):
+def articles_to_filtered_df(articles):
     """
     turn list of articles into df with relevant columns
     """
@@ -26,11 +26,12 @@ def articles_to_filted_df(articles):
 
     for article in articles:
         if 'time' in article and 'descendants' in article:
-            time = article['time']
-            # 1 AM UTC i 8pm EST
-            est_time = datetime.datetime.utcfromtimestamp(time) - est_offset_below_utc
-            # Ignoring seconds
-            est_mins_of_day = est_time.hour * 60 + est_time.minute
+            post_time = article['time']
+            # Transform unix utc to est, 1 AM UTC i 8pm EST
+            post_est_time = datetime.datetime.utcfromtimestamp(post_time) - est_offset_below_utc
+
+            # Find proximity of this time to 8PM, Ignoring seconds
+            est_mins_of_day = post_est_time.hour * 60 + post_est_time.minute
             delta_from_8pm = abs(utils.COMPARISON_POINT - est_mins_of_day)
             data_samples.append([delta_from_8pm, article['descendants']])
 

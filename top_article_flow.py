@@ -10,7 +10,7 @@ from utils import list_to_chunks
 
 def get_items(item_ids):
     """
-    Get responses fot there item ids
+    Get responses for these item ids
     """
     items = []
     for item_id in item_ids:
@@ -48,6 +48,7 @@ def show_top(amount=config.DEFAULT_TOP_POSTS_AMOUNT):
     """
     Print top articles (amount is also limited by the official API, currently 500
     """
+    print("Top 40 HN articles:")
     top_ids = get_top_ids(amount)
     response_items = get_items_by_ids_with_threads(top_ids)
     for i, response in enumerate(response_items):
