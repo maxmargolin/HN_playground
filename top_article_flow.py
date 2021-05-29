@@ -1,4 +1,5 @@
 import json
+import logging
 from multiprocessing.pool import ThreadPool
 
 import numpy as np
@@ -40,7 +41,10 @@ def get_top_ids(amount=config.DEFAULT_TOP_POSTS_AMOUNT):
     """
     Return ids of top HN articles
     """
-    response = requests.get("https://hacker-news.firebaseio.com/v0/topstories.json")
+    response = requests.get(config.TOP_STORIES_ENDPOINT)
+    if response.status_code != 200:
+        logging.error("Couldn't access HN api")
+        exit(1)
     response_json = json.loads(response.text)
     top_posts = np.array(response_json[:amount])
     return top_posts

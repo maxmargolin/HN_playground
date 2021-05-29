@@ -1,4 +1,5 @@
 import argparse
+import logging
 
 from comment_correlation_flow import article_time_correlation
 from likelihood_prediction_flow import likelihood_prediction
@@ -22,7 +23,7 @@ def main():
     elif args.comment_correlation:
         article_time_correlation()
     else:
-        print("No action chosen")
+        logging.error("No action chosen")
         parser.print_help()
 
 

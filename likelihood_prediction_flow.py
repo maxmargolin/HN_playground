@@ -1,3 +1,5 @@
+import logging
+
 from matplotlib import pyplot as plt
 from scipy.stats import binom
 
@@ -17,7 +19,7 @@ def prompt_tech_selection(technologies=config.TECHNOLOGIES):
     user_input = input()
     if not user_input.isdigit() or int(user_input) > len(technologies) or int(user_input) < 1:
         selection = 1
-        print(f"Bad input, using default selection {selection}")
+        logging.warning(f"Bad input, using default selection {selection}")
     else:
         selection = int(user_input)
     return technologies[selection - 1]
