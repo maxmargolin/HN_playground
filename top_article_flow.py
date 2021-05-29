@@ -22,7 +22,9 @@ def get_items_by_ids_with_threads(item_ids):
     """
     Using threads speeds up getting the titles.
     This is faster than doing it in 1 thread,
-    but maybe less fun that seeing the articles show up 1 by 1
+    but maybe less fun that seeing the articles show up 1 by 1.
+    Might have been faster not to use the API for each article and just scrape the website,
+    but that might eventually break.
     """
     thread_amount = config.THREAD_POOL_SIZE
     rows_per_thread = int((item_ids.shape[0] / thread_amount) + 1)
