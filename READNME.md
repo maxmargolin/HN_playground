@@ -32,5 +32,6 @@ Show the titles of the top 40 articles right now
 You will be given a choice of technology, its' likelihood of appearance the following month will be shown
 
 ####  -c, --comment-correlation
+(Bonus)
 Find correlation between post hour and number of comments
 
