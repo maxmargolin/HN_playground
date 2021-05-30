@@ -1,4 +1,6 @@
 # Kovrr Assignment
+Author: Max Margolin
+
 
 This project can do 3 nice things related to Hacker News:
 1. Show current top 40 articles
