@@ -31,8 +31,8 @@ def articles_to_filtered_df(articles):
             post_est_time = datetime.datetime.utcfromtimestamp(post_time) - est_offset_below_utc
 
             # Find proximity of this time to 8PM, Ignoring seconds
-            est_mins_of_day = post_est_time.hour * 60 + post_est_time.minute
-            delta_from_8pm = abs(utils.COMPARISON_POINT - est_mins_of_day)
+            minutes_of_day_est = post_est_time.hour * 60 + post_est_time.minute
+            delta_from_8pm = abs(utils.COMPARISON_POINT - minutes_of_day_est)
             data_samples.append([delta_from_8pm, article['descendants']])
 
     return data_samples

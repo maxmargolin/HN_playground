@@ -51,8 +51,8 @@ def print_text_results(total_monthly_articles, probability, selected_word):
     """
     print(f"Probability of word {selected_word} per title: {probability}")
     print(f"Expecting {total_monthly_articles} overall HN posts per month")
-    prob_atleast_once = 1 - (1 - probability) ** (total_monthly_articles)
-    print(f"Probability of ~{prob_atleast_once} for '{selected_word}' to appear at least once next month ")
+    prob_at_least_once = 1 - (1 - probability) ** total_monthly_articles
+    print(f"Probability of ~{prob_at_least_once} for '{selected_word}' to appear at least once next month ")
 
 
 def count_occurrences(article_json, selected_word):

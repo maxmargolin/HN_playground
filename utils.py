@@ -28,6 +28,6 @@ def get_json_from_file(file_name=config.DEFAULT_FILE):
     try:
         json_in_file = json.loads(file.read())
         return json_in_file
-    except:
+    except json.decoder.JSONDecodeError:
         logging.error(f"Invalid json inside file: {file_name}")
         exit(1)
